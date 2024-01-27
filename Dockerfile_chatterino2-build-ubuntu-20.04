@@ -38,7 +38,15 @@ apt-get install -y --no-install-recommends \
     libxcb-image0 \
     libxcb-keysyms1 \
     libxcb-render-util0 \
+    libsecret-1-dev
     libxcb-xinerama0
+
+# Install AppImage packaging dependencies
+apt-get -y install --no-install-recommends \
+        libfontconfig \
+        libxrender1 \
+        file
+
 apt-get clean
 EOF
 
@@ -56,13 +64,29 @@ rm -rf /tmp/*
 EOF
 
 # Install Qt as we do in CI
+# RUN <<EOF
+# set -e
+# pip3 install -U pip
+# pip3 install aqtinstall
+# aqt install-qt linux desktop 5.12.12
+# mkdir -p /opt/qt512
+# mv /5.12.12/gcc_64/* /opt/qt512
+# EOF
+
 RUN <<EOF
 set -e
 pip3 install -U pip
 pip3 install aqtinstall
-aqt install-qt linux desktop 5.12.12
-mkdir -p /opt/qt512
-mv /5.12.12/gcc_64/* /opt/qt512
+aqt install-qt linux desktop 5.15.2
+mkdir -p /opt/qt515
+mv /5.15.2/gcc_64/* /opt/qt515
 EOF
+
+ENV Qt5_DIR=/opt/qt515
+
+ADD ./.patches /tmp/.patches
+
+# Apply Qt patches
+RUN patch "/opt/qt515/include/QtConcurrent/qtconcurrentthreadengine.h" /tmp/.patches/qt5-on-newer-gcc.patch
 
 # vi: ft=dockerfile
