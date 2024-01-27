@@ -1,12 +1,13 @@
 FROM ubuntu:focal
 
 ARG BOOST_VERSION=1.81.0
-ARG BOOST_SHA256_HASH=cc4b893acf645c9d4b698e9a0f08ca8846aa5d6c68275c14c3e7949c24109454
+ARG BOOST_SHA256_HASH=71feeed900fbccca04a3b4f2f84a7c217186f28a940ed8b7ed4725986baf99fa
 
 ENV DEBIAN_FRONTEND noninteractive
 
 # Install package dependencies
 RUN <<EOF
+set -e
 apt-get update && \
 apt-get install -y --no-install-recommends \
     build-essential \
@@ -18,11 +19,31 @@ apt-get install -y --no-install-recommends \
     ca-certificates \
     libssl-dev \
     wget \
-    curl && \
+    git \
+    sudo \
+    curl \
+    cmake \
+    python3 \
+    python3-pip \
+    virtualenv \
+    rapidjson-dev \
+    libfuse2 \
+    libssl-dev \
+    libxcb-randr0-dev \
+    libpulse-dev \
+    libxkbcommon-x11-0 \
+    build-essential \
+    libgl1-mesa-dev \
+    libxcb-icccm4 \
+    libxcb-image0 \
+    libxcb-keysyms1 \
+    libxcb-render-util0 \
+    libxcb-xinerama0
 apt-get clean
 EOF
 
 RUN <<EOF
+set -e
 cd /tmp
 BOOST_VERSION_MOD=$(echo $BOOST_VERSION | tr . _)
 wget https://boostorg.jfrog.io/artifactory/main/release/${BOOST_VERSION}/source/boost_${BOOST_VERSION_MOD}.tar.bz2
@@ -33,3 +54,15 @@ cd boost_${BOOST_VERSION_MOD}
 ./b2 install
 rm -rf /tmp/*
 EOF
+
+# Install Qt as we do in CI
+RUN <<EOF
+set -e
+pip3 install -U pip
+pip3 install aqtinstall
+aqt install-qt linux desktop 5.12.12
+mkdir -p /opt/qt512
+mv /5.12.12/gcc_64/* /opt/qt512
+EOF
+
+# vi: ft=dockerfile

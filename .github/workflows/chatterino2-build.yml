@@ -3,6 +3,13 @@ name: Build
 
 on:
   push:
+    branches:
+      - master
+      - "bugfix-release/*"
+      - "release/*"
+  pull_request:
+  workflow_dispatch:
+  merge_group:
 
 concurrency:
   group: build-${{ github.ref }}
@@ -77,55 +84,6 @@ jobs:
           repository: "Chatterino/chatterino2"
           submodules: recursive
           fetch-depth: 0 # allows for tags access
-
-      - name: Install Qt5
-        if: startsWith(matrix.qt-version, '5.')
-        uses: jurplel/install-qt-action@v3.3.0
-        with:
-          cache: true
-          cache-key-prefix: ${{ runner.os }}-QtCache-${{ matrix.qt-version }}-v2
-          version: ${{ matrix.qt-version }}
-
-      - name: Install Qt 6.5.3 imageformats
-        if: startsWith(matrix.qt-version, '6.')
-        uses: jurplel/install-qt-action@v3.3.0
-        with:
-          cache: false
-          modules: qtimageformats
-          set-env: false
-          version: 6.5.3
-          extra: --noarchives
-
-      - name: Install Qt6
-        if: startsWith(matrix.qt-version, '6.')
-        uses: jurplel/install-qt-action@v3.3.0
-        with:
-          cache: true
-          cache-key-prefix: ${{ runner.os }}-QtCache-${{ matrix.qt-version }}-v2
-          modules: qt5compat qtimageformats
-          version: ${{ matrix.qt-version }}
-
-      # LINUX
-      - name: Install dependencies (Ubuntu)
-        if: startsWith(matrix.os, 'ubuntu')
-        run: |
-          sudo apt-get update
-          sudo apt-get -y install \
-              cmake \
-              virtualenv \
-              rapidjson-dev \
-              libfuse2 \
-              libssl-dev \
-              libxcb-randr0-dev \
-              libpulse-dev \
-              libxkbcommon-x11-0 \
-              build-essential \
-              libgl1-mesa-dev \
-              libxcb-icccm4 \
-              libxcb-image0 \
-              libxcb-keysyms1 \
-              libxcb-render-util0 \
-              libxcb-xinerama0
 
       - name: Apply Qt patches (Ubuntu)
         if: startsWith(matrix.os, 'ubuntu') && startsWith(matrix.qt-version, '5.')
