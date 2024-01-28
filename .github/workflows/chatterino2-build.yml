@@ -72,7 +72,7 @@ jobs:
         include:
           # Ubuntu 20.04, Qt 5.12
           - os: ubuntu-20.04
-            qt-version: 5.12.12
+            qt-version: 6.6.1
             force-lto: false
             plugins: false
             skip-artifact: false
@@ -104,6 +104,7 @@ jobs:
             -DCMAKE_EXPORT_COMPILE_COMMANDS=On \
             -DCHATTERINO_LTO="$C2_ENABLE_LTO" \
             -DCHATTERINO_PLUGINS="$C2_PLUGINS" \
+            -DCMAKE_PREFIX_PATH="$Qt6_DIR/lib/cmake" \
             -DBUILD_WITH_QT6="$C2_BUILD_WITH_QT6" \
             ..
           make -j"$(nproc)"
