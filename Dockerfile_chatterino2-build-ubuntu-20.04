@@ -277,6 +277,10 @@ apt-get install -y --no-install-recommends \
 apt-get install -y --no-install-recommends \
         sudo
 
+# Necessary for AppImage creation
+apt-get install -y --no-install-recommends \
+        file
+
 apt-get clean
 EOF
 
