@@ -16,6 +16,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  C2_ENABLE_LTO: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/bugfix-release/') || startsWith(github.ref, 'refs/heads/release/') }}
+  CHATTERINO_REQUIRE_CLEAN_GIT: On
+  C2_BUILD_WITH_QT6: Off
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
@@ -79,6 +82,29 @@ jobs:
             skip-crashpad: false
 
     steps:
+      - name: Force LTO
+        if: matrix.force-lto
+        run: |
+          echo "C2_ENABLE_LTO=ON" >> "$GITHUB_ENV"
+        shell: bash
+
+      - name: Enable plugin support
+        if: matrix.plugins
+        run: |
+          echo "C2_PLUGINS=ON" >> "$GITHUB_ENV"
+        shell: bash
+
+      - name: Set Crashpad
+        if: matrix.skip-crashpad == false
+        run: |
+          echo "C2_ENABLE_CRASHPAD=ON" >> "$GITHUB_ENV"
+        shell: bash
+      - name: Set BUILD_WITH_QT6
+        if: startsWith(matrix.qt-version, '6.')
+        run: |
+          echo "C2_BUILD_WITH_QT6=ON" >> "$GITHUB_ENV"
+        shell: bash
+
       - uses: actions/checkout@v4
         with:
           repository: "Chatterino/chatterino2"

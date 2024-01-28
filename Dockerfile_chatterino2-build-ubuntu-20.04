@@ -227,6 +227,7 @@ apt-get install -y --no-install-recommends \
     ca-certificates \
     libssl-dev \
     locales \
+    locales-all \
     curl \
     git
 
