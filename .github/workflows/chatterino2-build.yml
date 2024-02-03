@@ -1,0 +1,165 @@
+---
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+      - "bugfix-release/*"
+      - "release/*"
+  pull_request:
+  workflow_dispatch:
+  merge_group:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  C2_ENABLE_LTO: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/heads/bugfix-release/') || startsWith(github.ref, 'refs/heads/release/') }}
+  CHATTERINO_REQUIRE_CLEAN_GIT: On
+  C2_BUILD_WITH_QT6: Off
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # Run tests.
+  # See also https://docs.docker.com/docker-hub/builds/automated-testing/
+  # test:
+  #   runs-on: ubuntu-latest
+
+  #   steps:
+  #     - uses: actions/checkout@v4
+
+  #     - name: Run tests
+  #       run: |
+  #         docker build . --file Dockerfile_chatterino2-build-ubuntu-20.04
+
+  # push:
+  #   needs: test
+
+  #   runs-on: ubuntu-latest
+  #   if: github.event_name == 'push'
+
+  #   steps:
+  #     - uses: actions/checkout@v4
+
+  #     - name: Log into GitHub Container Registry
+  #       uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d
+  #       with:
+  #         registry: ${{ env.REGISTRY }}
+  #         username: ${{ github.actor }}
+  #         password: ${{ secrets.GITHUB_TOKEN }}
+
+  #     - name: Extract metadata (tags, labels) for Docker
+  #       id: meta
+  #       uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934
+  #       with:
+  #         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+  #     - name: Build and push Docker image
+  #       uses: docker/build-push-action@4a13e500e55cf31b7a5d59a38ab2040ab0f42f56
+  #       with:
+  #         context: .
+  #         push: true
+  #         tags: ${{ steps.meta.outputs.tags }}
+  #         labels: ${{ steps.meta.outputs.labels }}
+
+  build:
+    # needs: push
+    name: "Build TEST DOCKER IMAGE"
+    runs-on: ubuntu-latest
+    container: ghcr.io/chatterino/chatterino2-build-ubuntu-20.04:latest
+    strategy:
+      matrix:
+        include:
+          # Ubuntu 20.04, Qt 5.12
+          - os: ubuntu-20.04
+            qt-version: 6.6.1
+            force-lto: false
+            plugins: false
+            skip-artifact: false
+            skip-crashpad: false
+
+    steps:
+      - name: Force LTO
+        if: matrix.force-lto
+        run: |
+          echo "C2_ENABLE_LTO=ON" >> "$GITHUB_ENV"
+        shell: bash
+
+      - name: Enable plugin support
+        if: matrix.plugins
+        run: |
+          echo "C2_PLUGINS=ON" >> "$GITHUB_ENV"
+        shell: bash
+
+      - name: Set Crashpad
+        if: matrix.skip-crashpad == false
+        run: |
+          echo "C2_ENABLE_CRASHPAD=ON" >> "$GITHUB_ENV"
+        shell: bash
+      - name: Set BUILD_WITH_QT6
+        if: startsWith(matrix.qt-version, '6.')
+        run: |
+          echo "C2_BUILD_WITH_QT6=ON" >> "$GITHUB_ENV"
+        shell: bash
+
+      - uses: actions/checkout@v4
+        with:
+          repository: "Chatterino/chatterino2"
+          submodules: recursive
+          fetch-depth: 0 # allows for tags access
+
+      - name: Apply Qt patches (Ubuntu)
+        if: startsWith(matrix.os, 'ubuntu') && startsWith(matrix.qt-version, '5.')
+        run: |
+          patch "$Qt5_DIR/include/QtConcurrent/qtconcurrentthreadengine.h" .patches/qt5-on-newer-gcc.patch
+        shell: bash
+
+      - name: Build (Ubuntu)
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          mkdir build
+          cd build
+          CXXFLAGS=-fno-sized-deallocation cmake \
+            -DCMAKE_INSTALL_PREFIX=appdir/usr/ \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DPAJLADA_SETTINGS_USE_BOOST_FILESYSTEM=On \
+            -DUSE_PRECOMPILED_HEADERS=OFF \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=On \
+            -DCHATTERINO_LTO="$C2_ENABLE_LTO" \
+            -DCHATTERINO_PLUGINS="$C2_PLUGINS" \
+            -DCMAKE_PREFIX_PATH="$Qt6_DIR/lib/cmake" \
+            -DBUILD_WITH_QT6="$C2_BUILD_WITH_QT6" \
+            ..
+          make -j"$(nproc)"
+        shell: bash
+
+      - name: Package - AppImage (Ubuntu)
+        if: startsWith(matrix.os, 'ubuntu-20.04') && !matrix.skip-artifact
+        run: |
+          cd build
+          sh ./../.CI/CreateAppImage.sh
+        shell: bash
+
+      - name: Package - .deb (Ubuntu)
+        if: startsWith(matrix.os, 'ubuntu') && !matrix.skip-artifact
+        run: |
+          cd build
+          sh ./../.CI/CreateUbuntuDeb.sh
+        shell: bash
+
+      - name: Upload artifact - AppImage (Ubuntu)
+        if: startsWith(matrix.os, 'ubuntu-20.04') && !matrix.skip-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Chatterino-x86_64-${{ matrix.qt-version }}.AppImage
+          path: build/Chatterino-x86_64.AppImage
+
+      - name: Upload artifact - .deb (Ubuntu)
+        if: startsWith(matrix.os, 'ubuntu') && !matrix.skip-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Chatterino-${{ matrix.os }}-Qt-${{ matrix.qt-version }}.deb
+          path: build/Chatterino-${{ matrix.os }}-x86_64.deb
