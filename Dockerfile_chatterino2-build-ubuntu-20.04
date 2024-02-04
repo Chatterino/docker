@@ -147,6 +147,7 @@ apt-get install -y --no-install-recommends \
     libxcb-xinput-dev \
     libegl1-mesa-dev \
     libxkbcommon-dev \
+    libxkbcommon-x11-dev \
     libfontconfig1-dev
 
 apt-get clean
@@ -183,6 +184,8 @@ cd /tmp/qt/qt5
 ./configure \
     -static \
     -prefix /usr/local-qt \
+    -xcb \
+    -xkbcommon \
     -qpa xcb \
     -opensource \
     -system-zlib \
@@ -271,6 +274,7 @@ apt-get install -y --no-install-recommends \
     libxcb-xinput-dev \
     libegl1-mesa-dev \
     libxkbcommon-dev \
+    libxkbcommon-x11-dev \
     libfontconfig1-dev
 
 # Necessary for GitHub actions
@@ -280,6 +284,10 @@ apt-get install -y --no-install-recommends \
 # Necessary for AppImage creation
 apt-get install -y --no-install-recommends \
         file
+
+# Necessary for deb creation
+apt-get install -y --no-install-recommends \
+        lsb-release
 
 apt-get clean
 EOF
