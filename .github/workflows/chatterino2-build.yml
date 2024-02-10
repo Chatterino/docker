@@ -97,4 +97,4 @@ jobs:
 
       - name: Test docker image
         run: |
-          docker run -v "${PWD}:/srv" -w"/srv" local ./.CI/full-ubuntu-build.sh
+          docker run -v "${PWD}:/srv" -w"/srv" -e C2_PLUGINS -e C2_BUILD_WITH_QT6 local ./.CI/full-ubuntu-build.sh
