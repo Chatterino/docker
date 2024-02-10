@@ -93,7 +93,7 @@ jobs:
 
       - name: Build docker image
         run: |
-          docker build -t local < ./chatterino-docker/${{ matrix.dockerfile }}
+          docker build -t local -f ./chatterino-docker/${{ matrix.dockerfile }} .
 
       - name: Test docker image
         run: |
