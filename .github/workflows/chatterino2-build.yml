@@ -69,7 +69,6 @@ jobs:
     # needs: push
     name: "Build TEST DOCKER IMAGE"
     runs-on: ubuntu-latest
-    container: ghcr.io/chatterino/chatterino2-build-ubuntu-20.04:latest
     strategy:
       matrix:
         include:
