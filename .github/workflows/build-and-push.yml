@@ -34,7 +34,7 @@ jobs:
     env:
       C2_PLUGINS: "ON"
       C2_BUILD_WITH_QT6: "ON"
-      IMAGE_NAME: "${{ github.repository_owner }}/${{ matrix.image-name }}"
+      IMAGE_NAME: "chatterino/${{ matrix.image-name }}"
 
     steps:
       - uses: actions/checkout@v4
