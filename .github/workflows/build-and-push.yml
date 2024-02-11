@@ -63,7 +63,7 @@ jobs:
           push: false
           load: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          file: ./chatterino-docker/Dockerfile_${{ matrix.image-name }} \
+          file: ./chatterino-docker/Dockerfile_${{ matrix.image-name }}
           cache-from: type=registry,ref=${{ env.IMAGE_NAME }}
           cache-to: type=inline
 
@@ -85,6 +85,6 @@ jobs:
           context: .
           push: false
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          file: ./chatterino-docker/Dockerfile_${{ matrix.image-name }} \
+          file: ./chatterino-docker/Dockerfile_${{ matrix.image-name }}
           cache-from: type=registry,ref=${{ env.IMAGE_NAME }}
           cache-to: type=inline
