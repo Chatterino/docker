@@ -1,0 +1,77 @@
+---
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+  merge_group:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build:
+    name: "Build ${{ matrix.image-name }}"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          # The Dockerfile file name will be inferred from the image-name parameter
+          # If the image-name is chatterino2-xd, the Dockerfile it will look for is Dockerfile_chatterino2-xd
+          - os: ubuntu-20.04
+            qt-version: 6.6.1
+            image-name: chatterino2-build-ubuntu-20.04
+          - os: ubuntu-22.04
+            qt-version: 6.6.1
+            image-name: chatterino2-build-ubuntu-22.04
+    env:
+      C2_PLUGINS: "ON"
+      C2_BUILD_WITH_QT6: "ON"
+      IMAGE_NAME: "${{ github.repository_owner }}/${{ matrix.image-name }}"
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: "Chatterino/chatterino2"
+          submodules: recursive
+      - uses: actions/checkout@v4
+        with:
+          path: "chatterino-docker"
+
+      - name: Log into docker registry
+        if: github.event_name == 'push'
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build docker image
+        run: |
+          docker build \
+              -t ${{ env.IMAGE_NAME }} \
+              -f ./chatterino-docker/Dockerfile_${{ matrix.image-name }} \
+              .
+
+      # Build Chatterino master with this docker image
+      - name: Test docker image
+        run: |
+          docker run \
+              -v "${PWD}:/srv" \
+              -w"/srv" \
+              -e C2_PLUGINS \
+              -e C2_BUILD_WITH_QT6 \
+              ${{ env.IMAGE_NAME }} \
+              ./.CI/full-ubuntu-build.sh
+
+      - name: Push docker image
+        if: github.event_name == 'push'
+        run: |
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
