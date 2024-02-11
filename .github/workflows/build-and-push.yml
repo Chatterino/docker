@@ -61,7 +61,7 @@ jobs:
         with:
           context: .
           push: false
-          tags: ${{ env.IMAGE_NAME }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           file: ./chatterino-docker/Dockerfile_${{ matrix.image-name }} \
           cache-from: type=registry,ref=${{ env.IMAGE_NAME }}
           cache-to: type=inline
@@ -74,7 +74,7 @@ jobs:
               -w"/srv" \
               -e C2_PLUGINS \
               -e C2_BUILD_WITH_QT6 \
-              ${{ env.IMAGE_NAME }} \
+              ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} \
               ./.CI/full-ubuntu-build.sh
 
       - name: Push docker image
@@ -83,7 +83,7 @@ jobs:
         with:
           context: .
           push: false
-          tags: ${{ env.IMAGE_NAME }}
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           file: ./chatterino-docker/Dockerfile_${{ matrix.image-name }} \
           cache-from: type=registry,ref=${{ env.IMAGE_NAME }}
           cache-to: type=inline
