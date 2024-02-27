@@ -216,6 +216,7 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
+ENV QT_QPA_PLATFORM minimal
 ENV PATH="/usr/local-cmake/bin:${PATH}"
 ENV Qt6_DIR="/usr/local-qt"
 ENV Boost_DIR="/usr/local-boost"
