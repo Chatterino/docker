@@ -232,6 +232,7 @@ apt-get install -y --no-install-recommends \
     locales \
     locales-all \
     curl \
+    libbenchmark-dev \
     git
 
 apt-get install -y --no-install-recommends \
