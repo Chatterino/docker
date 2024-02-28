@@ -83,7 +83,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          push: false
+          push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           file: ./chatterino-docker/Dockerfile_${{ matrix.image-name }}
           cache-from: type=registry,ref=${{ env.IMAGE_NAME }}
