@@ -220,6 +220,8 @@ ENV QT_QPA_PLATFORM minimal
 ENV PATH="/usr/local-cmake/bin:${PATH}"
 ENV Qt6_DIR="/usr/local-qt"
 ENV Boost_DIR="/usr/local-boost"
+ENV CC=gcc-10
+ENV CXX=g++-10
 
 RUN <<EOF
 set -e
@@ -228,6 +230,7 @@ apt-get update
 
 apt-get install -y --no-install-recommends \
     build-essential \
+    g++-10 \
     ca-certificates \
     libssl-dev \
     locales \
