@@ -6,10 +6,10 @@ ARG CMAKE_SHA256SUM=15e94f83e647f7d620a140a7a5da76349fc47a1bfed66d0f5cdee8e73440
 
 ARG NUM_JOBS=26
 
-ENV DEBIAN_FRONTEND noninteractive
-ENV LC_ALL en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US.UTF-8
+ENV DEBIAN_FRONTEND=noninteractive
+ENV LC_ALL=en_US.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US.UTF-8
 
 RUN <<EOF
 set -e
@@ -52,10 +52,10 @@ ARG BOOST_SHA256SUM=cc4b893acf645c9d4b698e9a0f08ca8846aa5d6c68275c14c3e7949c2410
 
 ARG NUM_JOBS=26
 
-ENV DEBIAN_FRONTEND noninteractive
-ENV LC_ALL en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US.UTF-8
+ENV DEBIAN_FRONTEND=noninteractive
+ENV LC_ALL=en_US.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US.UTF-8
 
 # COPY --from=build-cmake /usr/local-cmake /usr/local-cmake
 
@@ -100,10 +100,10 @@ ARG NUM_JOBS=26
 
 COPY --from=build-cmake /usr/local-cmake /usr/local-cmake
 
-ENV DEBIAN_FRONTEND noninteractive
-ENV LC_ALL en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US.UTF-8
+ENV DEBIAN_FRONTEND=noninteractive
+ENV LC_ALL=en_US.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US.UTF-8
 ENV PATH="/usr/local-cmake/bin:${PATH}"
 
 RUN <<EOF
@@ -212,11 +212,11 @@ COPY --from=build-cmake /usr/local-cmake /usr/local-cmake
 COPY --from=build-boost /usr/local-boost /usr/local-boost
 COPY --from=build-qt /usr/local-qt /usr/local-qt
 
-ENV DEBIAN_FRONTEND noninteractive
-ENV LC_ALL en_US.UTF-8
-ENV LANG en_US.UTF-8
-ENV LANGUAGE en_US.UTF-8
-ENV QT_QPA_PLATFORM minimal
+ENV DEBIAN_FRONTEND=noninteractive
+ENV LC_ALL=en_US.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US.UTF-8
+ENV QT_QPA_PLATFORM=minimal
 ENV PATH="/usr/local-cmake/bin:${PATH}"
 ENV Qt6_DIR="/usr/local-qt"
 ENV Boost_DIR="/usr/local-boost"
