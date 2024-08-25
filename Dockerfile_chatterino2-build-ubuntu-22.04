@@ -94,7 +94,7 @@ EOF
 # Qt
 FROM ubuntu:22.04 AS build-qt
 
-ARG QT_TAG=v6.6.1
+ARG QT_TAG=v6.7.2
 
 ARG NUM_JOBS=26
 
