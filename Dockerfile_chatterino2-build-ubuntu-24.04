@@ -293,25 +293,3 @@ apt-get install -y --no-install-recommends \
 
 apt-get clean
 EOF
-
-# RUN <<EOF
-# set -e
-# 
-# mkdir /tmp/chatterino
-# cd /tmp/chatterino
-# git clone https://github.com/Chatterino/chatterino2
-# cd chatterino2
-# git checkout feat/ffz-channel-specific-badge-assignments
-# git submodule update --init --recursive
-# EOF
-# 
-# RUN <<EOF
-# set -e
-# 
-# mkdir /tmp/chatterino/chatterino2/build
-# cd /tmp/chatterino/chatterino2/build
-# cmake -DBUILD_WITH_QT6=On -DCMAKE_PREFIX_PATH="$Qt6_DIR/lib/cmake" ..
-# cmake --build .
-# EOF
-
-# vi: ft=dockerfile
