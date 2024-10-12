@@ -1,0 +1,5 @@
+FROM rust:slim
+
+RUN cargo install --git https://github.com/kevinastone/httpbox --rev 6f0255effaea4fafa5c19c0a53725474b1a63577
+
+ENTRYPOINT ["/usr/local/cargo/bin/httpbox"]
