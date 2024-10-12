@@ -17,8 +17,8 @@ env:
   REGISTRY: ghcr.io
 
 jobs:
-  build:
-    name: "Build ${{ matrix.image-name }}"
+  build-c2-build:
+    name: "Build ${{ matrix.image-name }} builder"
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -77,6 +77,56 @@ jobs:
               -e C2_BUILD_WITH_QT6 \
               ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} \
               ./.CI/full-ubuntu-build.sh
+
+      - name: Push docker image
+        if: github.event_name == 'push'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          file: ./chatterino-docker/Dockerfile_${{ matrix.image-name }}
+          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}
+          cache-to: type=inline
+
+  build-c2-generic:
+    name: "Build ${{ matrix.image-name }} generic"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          # The Dockerfile file name will be inferred from the image-name parameter
+          # If the image-name is chatterino2-xd, the Dockerfile it will look for is Dockerfile_chatterino2-xd
+          - image-name: chatterino2-test-httpbox
+    env:
+      IMAGE_NAME: "chatterino/${{ matrix.image-name }}"
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: "chatterino-docker"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log into docker registry
+        if: github.event_name == 'push'
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          load: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          file: ./chatterino-docker/Dockerfile_${{ matrix.image-name }}
+          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}
+          cache-to: type=inline
 
       - name: Push docker image
         if: github.event_name == 'push'
