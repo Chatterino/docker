@@ -90,14 +90,22 @@ jobs:
           cache-to: type=inline
 
   build-c2-generic:
-    name: "Build ${{ matrix.image-name }} generic"
-    runs-on: ubuntu-latest
+    name: "Build ${{ matrix.image-name }} ${{ matrix.os }}/${{ matrix.platform }}"
+    runs-on: ${{ matrix.os }}-latest
     strategy:
       matrix:
         include:
           # The Dockerfile file name will be inferred from the image-name parameter
           # If the image-name is chatterino2-xd, the Dockerfile it will look for is Dockerfile_chatterino2-xd
           - image-name: chatterino2-test-httpbox
+            os: ubuntu
+            platform: linux/amd64
+          - image-name: chatterino2-test-httpbox
+            os: ubuntu
+            platform: linux/arm64/v8
+          - image-name: chatterino2-test-httpbox
+            os: windows
+            platform: windows/amd64
     env:
       IMAGE_NAME: "chatterino/${{ matrix.image-name }}"
 
@@ -106,6 +114,8 @@ jobs:
         with:
           path: "chatterino-docker"
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -136,5 +146,6 @@ jobs:
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           file: ./chatterino-docker/Dockerfile_${{ matrix.image-name }}
+          platforms: ${{ matrix.platform }}
           cache-from: type=registry,ref=${{ env.IMAGE_NAME }}
           cache-to: type=inline
