@@ -279,6 +279,11 @@ apt-get install -y --no-install-recommends \
     libxkbcommon-x11-dev \
     libfontconfig1-dev
 
+# For builds with desktop notification support (default)
+apt-get install -y --no-install-recommends \
+    libnotify4 \
+    libnotify-dev
+
 # Necessary for GitHub actions
 apt-get install -y --no-install-recommends \
         sudo
