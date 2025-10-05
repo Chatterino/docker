@@ -279,6 +279,10 @@ apt-get install -y --no-install-recommends \
     libxkbcommon-x11-dev \
     libfontconfig1-dev
 
+# Use system RapidJSON instead of Chatterino submodule
+apt-get install -y --no-install-recommends \
+    rapidjson-dev
+
 # For builds with desktop notification support (default)
 apt-get install -y --no-install-recommends \
     libnotify4 \
