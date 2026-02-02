@@ -1,26 +1,24 @@
-## Groups
+## Ubuntu 22.04
 
-### Ubuntu 22.04 package
+First, build the Ubuntu 22.04 build environment docker image:  
+`docker build -t chatterino-ubuntu-22.04-build -f Dockerfile_chatterino2-build-ubuntu-22.04 .`
 
-`Dockerfile-ubuntu-22.04-package` relies on `Dockerfile-ubuntu-22.04-build`
+(alternatively pull from `ghcr.io/chatterino/chatterino2-build-ubuntu-22.04:latest`)
 
-To build, from the repo root
+Clone the Chatterino repo with all submodules (will note it as `/home/user/chatterino2` from now on), e.g. with `git clone --recurse-submodules https://github.com/Chatterino/chatterino2`
 
-1. Build a docker image that contains all the dependencies necessary to build Chatterino on Ubuntu 22.04  
-   `docker buildx build -t chatterino-ubuntu-22.04-base -f .docker/Dockerfile-ubuntu-22.04-base .`
-1. Build a docker image that contains all the build artifacts and source from building Chatterino on Ubuntu 22.04  
-   `docker buildx build -t chatterino-ubuntu-22.04-build -f .docker/Dockerfile-ubuntu-22.04-build .`
-1. Build a docker image that uses the above-built image & packages it into a .deb file  
-   `docker buildx build -t chatterino-ubuntu-22.04-package -f .docker/Dockerfile-ubuntu-22.04-package .`
+Build Chatterino in the docker image:
 
-To extract the final package, you can run the following command:  
-`docker run -v $PWD:/opt/mount --rm -it chatterino-ubuntu-22.04-package bash -c "cp /src/build/Chatterino-x86_64.deb /opt/mount/"`
+```sh
+docker run \
+    -v /home/user/chatterino2:/srv \
+    -w /srv \
+    --rm \
+    chatterino-ubuntu-22.04-build '.CI/full-ubuntu-build.sh'
+```
 
-NOTE: The AppImage from Ubuntu 22.04 is broken. Approach with caution
+Now you'll have an executable you can use or package in `/home/user/chatterino2/build`
 
-#### Testing
+## Ubuntu 24.04
 
-1. Build a docker image builds the Chatterino tests  
-   `docker buildx build -t chatterino-ubuntu-22.04-test -f .docker/Dockerfile-ubuntu-22.04-test .`
-1. Run the tests  
-   `docker run --rm --network=host chatterino-ubuntu-22.04-test`
+See the 22.04 instructions above and replace 22.04 with 24.04
