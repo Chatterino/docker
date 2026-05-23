@@ -148,7 +148,11 @@ apt-get install -y --no-install-recommends \
     libegl1-mesa-dev \
     libxkbcommon-dev \
     libxkbcommon-x11-dev \
-    libfontconfig1-dev
+    libfontconfig1-dev \
+    pkg-config \
+    libxcb1-dev \
+    libxcb-util-dev \
+    libwebp-dev
 
 apt-get clean
 EOF
