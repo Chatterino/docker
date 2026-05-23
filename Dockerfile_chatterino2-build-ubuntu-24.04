@@ -190,6 +190,7 @@ cd /tmp/qt/qt5
     -prefix /usr/local-qt \
     -xcb \
     -xkbcommon \
+    -qpa xcb \
     -opensource \
     -system-zlib \
     -system-libjpeg \
@@ -280,7 +281,11 @@ apt-get install -y --no-install-recommends \
     libegl1-mesa-dev \
     libxkbcommon-dev \
     libxkbcommon-x11-dev \
-    libfontconfig1-dev
+    libfontconfig1-dev \
+    pkg-config \
+    libxcb1-dev \
+    libxcb-util-dev \
+    libwebp-dev
 
 # Use system RapidJSON instead of Chatterino submodule
 apt-get install -y --no-install-recommends \
