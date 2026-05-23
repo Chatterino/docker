@@ -190,7 +190,6 @@ cd /tmp/qt/qt5
     -prefix /usr/local-qt \
     -xcb \
     -xkbcommon \
-    -qpa xcb \
     -opensource \
     -system-zlib \
     -system-libjpeg \
