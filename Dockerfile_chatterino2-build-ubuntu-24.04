@@ -1,8 +1,8 @@
 # cmake
 FROM ubuntu:24.04 AS build-cmake
 
-ARG CMAKE_VERSION=3.28.1
-ARG CMAKE_SHA256SUM=15e94f83e647f7d620a140a7a5da76349fc47a1bfed66d0f5cdee8e7344079ad
+ARG CMAKE_VERSION=4.3.2
+ARG CMAKE_SHA256SUM=b0231eb39b3c3cabdc568c619df78208a7bd95ea10c9b2236d61218bac1b367d
 
 ARG NUM_JOBS=26
 
@@ -94,7 +94,7 @@ EOF
 # Qt
 FROM ubuntu:24.04 AS build-qt
 
-ARG QT_TAG=v6.7.2
+ARG QT_TAG=v6.11.1
 
 ARG NUM_JOBS=26
 
@@ -148,7 +148,11 @@ apt-get install -y --no-install-recommends \
     libegl1-mesa-dev \
     libxkbcommon-dev \
     libxkbcommon-x11-dev \
-    libfontconfig1-dev
+    libfontconfig1-dev \
+    pkg-config \
+    libxcb1-dev \
+    libxcb-util-dev \
+    libwebp-dev
 
 apt-get clean
 EOF
@@ -277,7 +281,11 @@ apt-get install -y --no-install-recommends \
     libegl1-mesa-dev \
     libxkbcommon-dev \
     libxkbcommon-x11-dev \
-    libfontconfig1-dev
+    libfontconfig1-dev \
+    pkg-config \
+    libxcb1-dev \
+    libxcb-util-dev \
+    libwebp-dev
 
 # Use system RapidJSON instead of Chatterino submodule
 apt-get install -y --no-install-recommends \

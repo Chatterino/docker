@@ -1,5 +1,5 @@
 # cmake
-FROM ubuntu:22.04 AS build-cmake
+FROM ubuntu:26.04 AS build-cmake
 
 ARG CMAKE_VERSION=4.3.2
 ARG CMAKE_SHA256SUM=b0231eb39b3c3cabdc568c619df78208a7bd95ea10c9b2236d61218bac1b367d
@@ -45,7 +45,7 @@ EOF
 
 
 # boost
-FROM ubuntu:22.04 AS build-boost
+FROM ubuntu:26.04 AS build-boost
 
 ARG BOOST_VERSION=1.84.0
 ARG BOOST_SHA256SUM=cc4b893acf645c9d4b698e9a0f08ca8846aa5d6c68275c14c3e7949c24109454
@@ -92,7 +92,7 @@ EOF
 
 
 # Qt
-FROM ubuntu:22.04 AS build-qt
+FROM ubuntu:26.04 AS build-qt
 
 ARG QT_TAG=v6.11.1
 
@@ -210,7 +210,7 @@ EOF
 
 
 # Chatterino2
-FROM ubuntu:22.04
+FROM ubuntu:26.04
 
 COPY --from=build-cmake /usr/local-cmake /usr/local-cmake
 COPY --from=build-boost /usr/local-boost /usr/local-boost
