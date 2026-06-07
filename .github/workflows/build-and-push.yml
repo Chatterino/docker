@@ -34,9 +34,11 @@ jobs:
     env:
       C2_PLUGINS: "ON"
       C2_BUILD_WITH_QT6: "ON"
-      IMAGE_NAME: "chatterino/${{ matrix.image-name }}"
+      IMAGE_NAME: "${{ github.repository_owner }}/${{ matrix.image-name }}"
 
     steps:
+      - name: Lowercase Repo Owner in IMAGE_NAME env var
+        run: echo "IMAGE_NAME=${IMAGE_NAME,,}" >> "${GITHUB_ENV}"
       - name: Free Disk Space
         uses: jlumbroso/free-disk-space@main
         with:
@@ -114,9 +116,11 @@ jobs:
           # If the image-name is chatterino2-xd, the Dockerfile it will look for is Dockerfile_chatterino2-xd
           - image-name: chatterino2-test-httpbox
     env:
-      IMAGE_NAME: "chatterino/${{ matrix.image-name }}"
+      IMAGE_NAME: "${{ github.repository_owner }}/${{ matrix.image-name }}"
 
     steps:
+      - name: Lowercase Repo Owner in IMAGE_NAME env var
+        run: echo "IMAGE_NAME=${IMAGE_NAME,,}" >> "${GITHUB_ENV}"
       - uses: actions/checkout@v6
         with:
           path: "chatterino-docker"
