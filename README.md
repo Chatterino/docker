@@ -22,3 +22,7 @@ Now you'll have an executable you can use or package in `/home/user/chatterino2/
 ## Ubuntu 24.04
 
 See the 22.04 instructions above and replace 22.04 with 24.04
+
+## Ubuntu 26.04
+
+See the 22.04 instructions above and replace 22.04 with 26.04
