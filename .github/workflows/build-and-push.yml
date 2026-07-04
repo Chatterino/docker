@@ -54,11 +54,11 @@ jobs:
           large-packages: true
           docker-images: true
           swap-storage: true
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           repository: "Chatterino/chatterino2"
           submodules: recursive
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           path: "chatterino-docker"
 
@@ -121,7 +121,7 @@ jobs:
     steps:
       - name: Lowercase Repo Owner in IMAGE_NAME env var
         run: echo "IMAGE_NAME=${IMAGE_NAME,,}" >> "${GITHUB_ENV}"
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           path: "chatterino-docker"
 
